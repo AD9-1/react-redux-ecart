@@ -2,11 +2,14 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
+import { useDispatch } from "react-redux";
+import { AddToCart } from "./redux/action/action";
 
-const Product = ({ id, link }) => {
+const Product = ({ id }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [goToCart, setGotoCart] = useState();
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const getProduct = async () => {
       setLoading(true);
@@ -16,7 +19,10 @@ const Product = ({ id, link }) => {
     };
     getProduct();
   }, [id]);
-  const handleClickGo = () => {};
+  const handleClickAdd = (product) => {
+    console.log(product);
+    dispatch(AddToCart(product))
+  };
   const Loading = () => {
     return (
       <div>
@@ -47,10 +53,13 @@ const Product = ({ id, link }) => {
             </p>
             <h3 className="display-8">${product.price}</h3>
             <p className="display-7">{product.description}</p>
-            <button className="btn btn-warning me-3">Add To Cart</button>
-            <button className="btn btn-dark" onClick={handleClickGo}>
-              Go To Cart
+            <button
+              className="btn btn-warning me-3"
+               onClick={()=>handleClickAdd(product)}
+            >
+              Add To Cart
             </button>
+            <button className="btn btn-dark">Go To Cart</button>
           </div>
         </div>
       )

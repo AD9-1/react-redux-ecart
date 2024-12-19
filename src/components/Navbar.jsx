@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRightToBracket,
   faCartShopping,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCircleUser } from "@fortawesome/free-regular-svg-icons";
+import { useSelector} from "react-redux";
+
+
 export default function Navbar({ link, setLink }) {
+  const cartItems = useSelector((state) => state.handlecart);
+const tot=cartItems.reduce((acc,item)=>acc+item.quantity,0)
+
   return (
     <nav className="navbar navbar-expand-lg bg-light shadow-sm py-3">
       <div className="container">
@@ -68,7 +74,7 @@ export default function Navbar({ link, setLink }) {
               <FontAwesomeIcon className="ms-2" icon={faCircleUser} />
             </button>
             <button className="btn btn-outline-success" type="submit">
-              Cart(0)
+              Cart({tot})
               <FontAwesomeIcon className="ms-2" icon={faCartShopping} />
             </button>
           </div>

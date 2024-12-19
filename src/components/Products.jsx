@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
+
 
 
 const Products = ({ link, setLink, setSelectedProduct }) => {
@@ -7,7 +7,7 @@ const Products = ({ link, setLink, setSelectedProduct }) => {
   const [products, setProducts] = useState([]);
 
   const [filteredProducts, setFilteredProducts] = useState([]);
-  console.log("link in products", link);
+
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await fetch("https://fakestoreapi.com/products");
@@ -15,7 +15,7 @@ const Products = ({ link, setLink, setSelectedProduct }) => {
       setLoading(false);
       setProducts(data);
       setFilteredProducts(data);
-      console.log(data);
+  
     };
     fetchProducts();
   }, []);
