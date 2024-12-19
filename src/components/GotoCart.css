@@ -1,0 +1,30 @@
+.container {
+}
+.container-box {
+  display: flex;
+justify-content: space-evenly;
+
+  margin-top: 3rem;
+}
+.container-box-image {
+  max-width: fit-content;
+  img {
+    width: 200px;
+    height: 200px;
+  }
+}
+.container-box-description {
+width:60%;
+   h2 {
+    font-size: 1.2rem;
+  }
+  .cartItem-value{
+    font-weight: bold;
+    font-size: 1rem;
+    color: rgb(54, 59, 54);
+  }
+  .cartItem-price{
+    font-size: 1rem;
+    color: rgb(54, 59, 54);
+  }
+}

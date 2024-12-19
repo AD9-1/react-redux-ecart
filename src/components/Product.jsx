@@ -5,7 +5,7 @@ import Skeleton from "react-loading-skeleton";
 import { useDispatch } from "react-redux";
 import { AddToCart } from "./redux/action/action";
 
-const Product = ({ id }) => {
+const Product = ({ id, link, setLink }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -21,7 +21,10 @@ const Product = ({ id }) => {
   }, [id]);
   const handleClickAdd = (product) => {
     console.log(product);
-    dispatch(AddToCart(product))
+    dispatch(AddToCart(product));
+  };
+  const handleGoto = () => {
+    setLink("gotoCart");
   };
   const Loading = () => {
     return (
@@ -55,11 +58,13 @@ const Product = ({ id }) => {
             <p className="display-7">{product.description}</p>
             <button
               className="btn btn-warning me-3"
-               onClick={()=>handleClickAdd(product)}
+              onClick={() => handleClickAdd(product)}
             >
               Add To Cart
             </button>
-            <button className="btn btn-dark">Go To Cart</button>
+            <button className="btn btn-dark" onClick={handleGoto}>
+              Go To Cart
+            </button>
           </div>
         </div>
       )
