@@ -28,13 +28,8 @@ const Product = ({ id, link, setLink }) => {
   };
   const Loading = () => {
     return (
-      <div>
-        <div className="col-md-6">
-          <Skeleton height={350} />
-        </div>
-        <div className="col-md-6">
-          <Skeleton height={30} width={400} />
-        </div>
+      <div >
+       Loading...
       </div>
     );
   };
