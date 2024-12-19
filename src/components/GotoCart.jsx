@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "./GotoCart.css"
+import "./GotoCart.css";
 const GotoCart = () => {
   const cartItems = useSelector((state) => state.handlecart);
   const dispatch = useDispatch();
@@ -20,16 +20,41 @@ const GotoCart = () => {
             </section>
             <section className="container-box-description">
               <h2>{cartItem.title}</h2>
-              <p className="cartItem-value" >
+              <p className="cartItem-value">
                 {cartItem.quantity}x{cartItem.price}
-                <span className="cartItem-price">={cartItem.quantity * cartItem.price}</span>
+                <span className="cartItem-price">
+                  ={cartItem.quantity * cartItem.price}
+                </span>
               </p>
-              <button className="btn btn-outline-danger me-2" onClick={() => handleRemove(cartItem)}>-</button>
-              <button className="btn btn-outline-success"onClick={() => handleAdd(cartItem)}>+</button>
+              <button
+                className="btn btn-outline-danger me-2"
+                onClick={() => handleRemove(cartItem)}
+              >
+                -
+              </button>
+              <button
+                className="btn btn-outline-success"
+                onClick={() => handleAdd(cartItem)}
+              >
+                +
+              </button>
             </section>
           </div>
         );
       })}
+      <hr />
+      <article>
+        <h4>
+          Total Price:{" "}
+          {Math.ceil(
+            cartItems.reduce(
+              (acc, item) => acc + item.quantity * item.price,
+              0
+            ) * 100
+          ) / 100}
+        </h4>
+        <button className="btn btn-warning">Checkout</button>
+      </article>
     </div>
   );
 };

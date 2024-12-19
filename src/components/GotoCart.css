@@ -1,8 +1,11 @@
 .container {
+
 }
 .container-box {
   display: flex;
 justify-content: space-evenly;
+background-color: beige;
+
 
   margin-top: 3rem;
 }

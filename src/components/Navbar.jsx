@@ -73,7 +73,7 @@ const tot=cartItems.reduce((acc,item)=>acc+item.quantity,0)
               Sign-up
               <FontAwesomeIcon className="ms-2" icon={faCircleUser} />
             </button>
-            <button className="btn btn-outline-success" type="submit" >
+            <button className="btn btn-outline-success" onClick={()=>setLink("gotoCart")} type="submit" >
               Cart({tot})
               <FontAwesomeIcon className="ms-2" icon={faCartShopping} />
             </button>
