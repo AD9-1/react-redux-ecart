@@ -65,7 +65,7 @@ const tot=cartItems.reduce((acc,item)=>acc+item.quantity,0)
             </li>
           </ul>
           <div className="buttons">
-            <button className="btn btn-secondary me-2" type="submit">
+            <button className="btn btn-secondary me-2" type="submit" onClick={()=>setLink("login")}>
               Login
               <FontAwesomeIcon className="ms-2" icon={faArrowRightToBracket} />
             </button>

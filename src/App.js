@@ -11,6 +11,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 
 import LocationHandler from "./components/LocationHandler";
+import Login from "./Login";
 function App() {
   const [link, setLink] = useState("home");
   const [selectedProduct, setSelectedProduct] = useState();
@@ -35,7 +36,8 @@ function App() {
    
       {link === "about" && <div>About Us Page Content</div>}
       {link === "contact" && <div>Contact Us Page Content</div>}
-      {link === "login" && <div>Login Page Content</div>}
+      {link === "login" && <Login setLink={setLink} link={link}/>}
+      {link === "signup" && <Failure link={link} setLink={setLink}/>}
    <Routes>
     <Route path="/cancel" element={<Failure link={link} setLink={setLink}/>}/>
    </Routes>
