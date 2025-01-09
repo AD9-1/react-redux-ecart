@@ -1,14 +1,54 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./GotoCart.css";
-const GotoCart = () => {
+import { loadStripe } from "@stripe/stripe-js";
+const GotoCart = ({ setLink }) => {
   const cartItems = useSelector((state) => state.handlecart);
+   const token=sessionStorage.getItem("token")
   const dispatch = useDispatch();
+  const totalPrice = Math.ceil(
+    (cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0) *
+      100) /
+      100
+  );
   const handleRemove = (cartItem) => {
     dispatch({ type: "REMOVEITEM", payload: cartItem });
   };
   const handleAdd = (cartItem) => {
     dispatch({ type: "ADDITEM", payload: cartItem });
+  };
+  const makePayment = async () => {
+    if (!token) {
+      alert("Please login first");
+      setLink("login");
+      return;
+    }
+    const stripe = await loadStripe(
+      "pk_test_51OhJiKEbJSAocZFKhnUrTUYuuLGA9WZg7pkV8ygQnqwEqZKuEDtph9GkFTeVv4gpTR0YtBwclu3VomKZmQ2OBSdl00JBjvRPG3"
+    );
+    const body = { products: cartItems };
+    const headers = { "Content-Type": "application/json" };
+
+    try {
+      const res = await fetch("http://localhost:2000/stripe", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(body),
+      });
+      const session = await res.json();
+      console.log("Session:", session);
+
+      if (session && session.id) {
+        const result = await stripe.redirectToCheckout({ sessionId: session.id });
+      
+        if (result.error) {
+          console.error("Stripe Checkout Error:", result.error.message);
+          setLink("cancel");
+        }
+      }
+    } catch (error) {
+      console.log("There are some errors:", error);
+    }
   };
   return (
     <div className="container">
@@ -44,16 +84,10 @@ const GotoCart = () => {
       })}
       <hr />
       <article>
-        <h4>
-          Total Price:{" "}
-          {Math.ceil(
-            cartItems.reduce(
-              (acc, item) => acc + item.quantity * item.price,
-              0
-            ) * 100
-          ) / 100}
-        </h4>
-        <button className="btn btn-warning">Checkout</button>
+        <h4>Total Price: {totalPrice}</h4>
+        <button className="btn btn-warning" onClick={makePayment}>
+          Checkout
+        </button>
       </article>
     </div>
   );

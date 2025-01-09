@@ -13,7 +13,6 @@ const handlecart = (state = cart, action) => {
       } else {
         return [...state, { ...product, quantity: 1 }];
       }
-  
 
     case "REMOVEITEM":
       const productExists = state.find((item) => item.id == product.id);
@@ -22,14 +21,15 @@ const handlecart = (state = cart, action) => {
           return state.filter((item) => item.id !== productExists.id);
         } else {
           return [
-            ...state.filter(item=>item.id !== productExists.id),
+            ...state.filter((item) => item.id !== productExists.id),
             { ...productExists, quantity: productExists.quantity - 1 },
           ];
         }
       } else return state;
-    
 
-       
+    case "CLEARCART":
+      return [];
+
     default:
       return state;
   }

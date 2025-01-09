@@ -3,7 +3,7 @@ import React from "react";
 
 const Home = () => {
   return (
-    <div>
+    <div className="p-relative">
       <div className="card text-bg-0">
         <img src="assets/fashion.jpg" className="card-img" height="500px" />
         <div className="card-img-overlay d-flex bg-red align-items-center">
