@@ -1,32 +1,48 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./GotoCart.css";
 import { loadStripe } from "@stripe/stripe-js";
 const GotoCart = ({ setLink }) => {
-  const cartItems = useSelector((state) => state.handlecart);
-   const token=sessionStorage.getItem("token")
+  const ItemsInCart = useSelector((state) => state.handlecart);
+  const token = sessionStorage.getItem("token");
   const dispatch = useDispatch();
-  const totalPrice = Math.ceil(
-    (cartItems.reduce((acc, item) => acc + item.quantity * item.price, 0) *
-      100) /
-      100
-  );
+  const totalPrice = ItemsInCart.reduce((acc, item) => acc + item.quantity * item.price, 0) 
+     
+  useEffect(() => {
+    const fetchCart = async () => {
+      const res = await fetch("http://localhost:2000/user/getCart", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        dispatch({ type: "LOADCART", payload: data.data });
+      }
+    };
+    fetchCart();
+  }, [token]);
+
   const handleRemove = (cartItem) => {
     dispatch({ type: "REMOVEITEM", payload: cartItem });
   };
   const handleAdd = (cartItem) => {
     dispatch({ type: "ADDITEM", payload: cartItem });
   };
+  useEffect(() => {
+    console.log("token", token);
+  }, [token]);
   const makePayment = async () => {
     if (!token) {
       alert("Please login first");
       setLink("login");
       return;
     }
+
     const stripe = await loadStripe(
       "pk_test_51OhJiKEbJSAocZFKhnUrTUYuuLGA9WZg7pkV8ygQnqwEqZKuEDtph9GkFTeVv4gpTR0YtBwclu3VomKZmQ2OBSdl00JBjvRPG3"
     );
-    const body = { products: cartItems };
+    const body = { products: ItemsInCart };
     const headers = { "Content-Type": "application/json" };
 
     try {
@@ -39,8 +55,10 @@ const GotoCart = ({ setLink }) => {
       console.log("Session:", session);
 
       if (session && session.id) {
-        const result = await stripe.redirectToCheckout({ sessionId: session.id });
-      
+        const result = await stripe.redirectToCheckout({
+          sessionId: session.id,
+        });
+
         if (result.error) {
           console.error("Stripe Checkout Error:", result.error.message);
           setLink("cancel");
@@ -52,7 +70,7 @@ const GotoCart = ({ setLink }) => {
   };
   return (
     <div className="container">
-      {cartItems.map((cartItem) => {
+      {ItemsInCart.map((cartItem) => {
         return (
           <div className="container-box" key={cartItem.id}>
             <section className="container-box-image">

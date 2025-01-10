@@ -1,16 +1,49 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRightToBracket,
   faCartShopping,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCircleUser } from "@fortawesome/free-regular-svg-icons";
-import { useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-
+const token = sessionStorage.getItem("token");
 export default function Navbar({ link, setLink }) {
   const cartItems = useSelector((state) => state.handlecart);
-const tot=cartItems.reduce((acc,item)=>acc+item.quantity,0)
+  const dispatch = useDispatch();
+  const [isLoaded, setIsLoaded] = useState(false);
+  useEffect(() => {
+    const fetchCart = async () => {
+      setIsLoaded(false)
+      if (token) {
+        try {
+          const response = await fetch("http://localhost:2000/user/getCart", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          if (response.ok && data.data) {
+            dispatch({ type: "LOADCART", payload: data.data }); // Update Redux state with fetched cart
+          }
+        } catch (err) {
+          console.error("Error fetching cart:", err);
+        } finally {
+          setIsLoaded(true);
+        }
+      }
+    };
+
+    fetchCart();
+  }, [token, dispatch]);
+  const totalItemsWithLogin = useMemo(() => {
+    return cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  }, [cartItems]);
+  const totalItemsWithoutLogin=cartItems.reduce((acc, item) => acc + item.quantity,0)
+  const handleGoto = () => {
+    setLink("gotoCart");
+  };
 
   return (
     <nav className="navbar navbar-expand-lg bg-light shadow-sm py-3">
@@ -65,7 +98,11 @@ const tot=cartItems.reduce((acc,item)=>acc+item.quantity,0)
             </li>
           </ul>
           <div className="buttons">
-            <button className="btn btn-secondary me-2" type="submit" onClick={()=>setLink("login")}>
+            <button
+              className="btn btn-secondary me-2"
+              type="submit"
+              onClick={() => setLink("login")}
+            >
               Login
               <FontAwesomeIcon className="ms-2" icon={faArrowRightToBracket} />
             </button>
@@ -73,8 +110,12 @@ const tot=cartItems.reduce((acc,item)=>acc+item.quantity,0)
               Sign-up
               <FontAwesomeIcon className="ms-2" icon={faCircleUser} />
             </button>
-            <button className="btn btn-outline-success" onClick={()=>setLink("gotoCart")} type="submit" >
-              Cart({tot})
+            <button
+              className="btn btn-outline-success"
+              onClick={handleGoto}
+              type="submit"
+            >
+              Cart({isLoaded ? totalItemsWithLogin :totalItemsWithoutLogin})
               <FontAwesomeIcon className="ms-2" icon={faCartShopping} />
             </button>
           </div>

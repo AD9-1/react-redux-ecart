@@ -29,7 +29,9 @@ const handlecart = (state = cart, action) => {
 
     case "CLEARCART":
       return [];
-
+    case "LOADCART":
+      console.log("inside loadcart state",product)
+      return product;
     default:
       return state;
   }

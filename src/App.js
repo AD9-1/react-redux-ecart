@@ -37,7 +37,7 @@ function App() {
       {link === "about" && <div>About Us Page Content</div>}
       {link === "contact" && <div>Contact Us Page Content</div>}
       {link === "login" && <Login setLink={setLink} link={link}/>}
-      {link === "signup" && <Failure link={link} setLink={setLink}/>}
+      {link === "signup" && <Login link={link} setLink={setLink}/>}
    <Routes>
     <Route path="/cancel" element={<Failure link={link} setLink={setLink}/>}/>
    </Routes>

@@ -1,15 +1,17 @@
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-import Skeleton from "react-loading-skeleton";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { AddToCart } from "./redux/action/action";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Product = ({ id, link, setLink }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
-
+  
+  const token = sessionStorage.getItem("token");
   useEffect(() => {
     const getProduct = async () => {
       setLoading(true);
@@ -19,19 +21,35 @@ const Product = ({ id, link, setLink }) => {
     };
     getProduct();
   }, [id]);
-  const handleClickAdd = (product) => {
+  const handleClickAdd = async (product) => {
     console.log(product);
-    dispatch(AddToCart(product));
+    const cartItem=product
+   dispatch(AddToCart(product));
+    try {
+      if (token) {
+        await fetch("http://localhost:2000/user/addToCart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body:JSON.stringify({cartItem}),
+        });
+      }
+      else{
+        toast.error("Please login first to checkout product");
+      }
+    } catch (err) {
+      toast.error("Problem adding into cart");
+      console.log("error", err);
+      return;
+    }
   };
   const handleGoto = () => {
     setLink("gotoCart");
   };
   const Loading = () => {
-    return (
-      <div >
-       Loading...
-      </div>
-    );
+    return <div>Loading...</div>;
   };
   const ShowProduct = () => {
     return (
