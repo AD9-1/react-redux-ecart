@@ -4,7 +4,7 @@ const handlecart = (state = cart, action) => {
   switch (action.type) {
     case "ADDITEM":
       const productExists1 = state.find((item) => item.id == product.id);
-      console.log(state);
+      console.log("state in additem: " ,state);
       if (productExists1) {
         return [
           ...state.filter((item) => item.id !== productExists1.id),

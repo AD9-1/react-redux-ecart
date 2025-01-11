@@ -7,14 +7,27 @@ import {
 import { faCircleUser } from "@fortawesome/free-regular-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 
-const token = sessionStorage.getItem("token");
 export default function Navbar({ link, setLink }) {
-  const cartItems = useSelector((state) => state.handlecart);
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [token, setToken] = useState(sessionStorage.getItem("token") || null);
+
+
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(sessionStorage.getItem("token") || null);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+
+
   useEffect(() => {
     const fetchCart = async () => {
-      setIsLoaded(false)
+      setIsLoaded(false);
       if (token) {
         try {
           const response = await fetch("http://localhost:2000/user/getCart", {
@@ -33,14 +46,22 @@ export default function Navbar({ link, setLink }) {
           setIsLoaded(true);
         }
       }
+     
     };
-
     fetchCart();
   }, [token, dispatch]);
+
+  const cartItems = useSelector((state) => state.handlecart);
+  console.log("Cart items", cartItems);
+
   const totalItemsWithLogin = useMemo(() => {
     return cartItems.reduce((acc, item) => acc + item.quantity, 0);
   }, [cartItems]);
-  const totalItemsWithoutLogin=cartItems.reduce((acc, item) => acc + item.quantity,0)
+
+  const totalItemsWithoutLogin = cartItems.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
   const handleGoto = () => {
     setLink("gotoCart");
   };
@@ -115,7 +136,7 @@ export default function Navbar({ link, setLink }) {
               onClick={handleGoto}
               type="submit"
             >
-              Cart({isLoaded ? totalItemsWithLogin :totalItemsWithoutLogin})
+              Cart({isLoaded ? totalItemsWithLogin : totalItemsWithoutLogin})
               <FontAwesomeIcon className="ms-2" icon={faCartShopping} />
             </button>
           </div>

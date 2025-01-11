@@ -2,12 +2,18 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./GotoCart.css";
 import { loadStripe } from "@stripe/stripe-js";
+
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const GotoCart = ({ setLink }) => {
   const ItemsInCart = useSelector((state) => state.handlecart);
   const token = sessionStorage.getItem("token");
   const dispatch = useDispatch();
-  const totalPrice = ItemsInCart.reduce((acc, item) => acc + item.quantity * item.price, 0) 
-     
+  const totalPrice = ItemsInCart.reduce(
+    (acc, item) => acc + item.quantity * item.price,
+    0
+  );
+
   useEffect(() => {
     const fetchCart = async () => {
       const res = await fetch("http://localhost:2000/user/getCart", {
@@ -23,11 +29,44 @@ const GotoCart = ({ setLink }) => {
     fetchCart();
   }, [token]);
 
-  const handleRemove = (cartItem) => {
+  const handleRemove = async (cartItem) => {
     dispatch({ type: "REMOVEITEM", payload: cartItem });
+    try {
+      if (token) {
+        const res = await fetch("http://localhost:2000/user/removeFromCart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ cartItem }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          toast.success(data.success);
+        }
+      }
+    } catch (err) {
+      toast.error("Error removing from cart", err);
+    }
   };
-  const handleAdd = (cartItem) => {
+
+  const handleAdd = async (cartItem) => {
     dispatch({ type: "ADDITEM", payload: cartItem });
+    try {
+      if (token) {
+        await fetch("http://localhost:2000/user/addToCart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ cartItem }),
+        });
+      }
+    } catch (err) {
+      toast.error("Error adding into cart", err);
+    }
   };
   useEffect(() => {
     console.log("token", token);

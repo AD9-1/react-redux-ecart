@@ -1,15 +1,14 @@
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-import { useDispatch,useSelector } from "react-redux";
-import { AddToCart } from "./redux/action/action";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
+
+
+import AddToCart from "./AddToCart";
 const Product = ({ id, link, setLink }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
+
   
   const token = sessionStorage.getItem("token");
   useEffect(() => {
@@ -21,30 +20,7 @@ const Product = ({ id, link, setLink }) => {
     };
     getProduct();
   }, [id]);
-  const handleClickAdd = async (product) => {
-    console.log(product);
-    const cartItem=product
-   dispatch(AddToCart(product));
-    try {
-      if (token) {
-        await fetch("http://localhost:2000/user/addToCart", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body:JSON.stringify({cartItem}),
-        });
-      }
-      else{
-        toast.error("Please login first to checkout product");
-      }
-    } catch (err) {
-      toast.error("Problem adding into cart");
-      console.log("error", err);
-      return;
-    }
-  };
+
   const handleGoto = () => {
     setLink("gotoCart");
   };
@@ -69,12 +45,7 @@ const Product = ({ id, link, setLink }) => {
             </p>
             <h3 className="display-8">${product.price}</h3>
             <p className="display-7">{product.description}</p>
-            <button
-              className="btn btn-warning me-3"
-              onClick={() => handleClickAdd(product)}
-            >
-              Add To Cart
-            </button>
+          <AddToCart token={token} cartItem={product}/>
             <button className="btn btn-dark" onClick={handleGoto}>
               Go To Cart
             </button>
