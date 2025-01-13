@@ -14,6 +14,10 @@ const GotoCart = ({ setLink }) => {
     0
   );
 
+useEffect(()=>{
+  if(totalPrice===0)
+    setLink("home")
+},[totalPrice])
   useEffect(() => {
     const fetchCart = async () => {
       const res = await fetch("http://localhost:2000/user/getCart", {

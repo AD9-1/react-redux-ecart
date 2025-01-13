@@ -6,12 +6,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faCircleUser } from "@fortawesome/free-regular-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
+import Modal from "./Modal";
 
 export default function Navbar({ link, setLink }) {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
   const [token, setToken] = useState(sessionStorage.getItem("token") || null);
-
+const[modal,setModal]=useState(false)
 
 
   useEffect(() => {
@@ -63,7 +64,10 @@ export default function Navbar({ link, setLink }) {
     0
   );
   const handleGoto = () => {
-    setLink("gotoCart");
+    if (cartItems.length === 0) {
+      setModal(true);
+    }
+   else setLink("gotoCart");
   };
 
   return (
@@ -142,6 +146,7 @@ export default function Navbar({ link, setLink }) {
           </div>
         </div>
       </div>
+      {modal && <Modal setModal={setModal}/>}
     </nav>
   );
 }
