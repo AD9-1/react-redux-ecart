@@ -5,6 +5,7 @@ import { loadStripe } from "@stripe/stripe-js";
 
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ClearCart } from "./redux/action/action";
 const GotoCart = ({ setLink }) => {
   const ItemsInCart = useSelector((state) => state.handlecart);
   const token = sessionStorage.getItem("token");
@@ -14,10 +15,9 @@ const GotoCart = ({ setLink }) => {
     0
   );
 
-useEffect(()=>{
-  if(totalPrice===0)
-    setLink("home")
-},[totalPrice])
+  useEffect(() => {
+    if (totalPrice === 0) setLink("home");
+  }, [totalPrice]);
   useEffect(() => {
     const fetchCart = async () => {
       const res = await fetch("http://localhost:2000/user/getCart", {
@@ -72,9 +72,7 @@ useEffect(()=>{
       toast.error("Error adding into cart", err);
     }
   };
-  useEffect(() => {
-    console.log("token", token);
-  }, [token]);
+
   const makePayment = async () => {
     if (!token) {
       alert("Please login first");
@@ -95,15 +93,13 @@ useEffect(()=>{
         body: JSON.stringify(body),
       });
       const session = await res.json();
-      console.log("Session:", session);
-
       if (session && session.id) {
         const result = await stripe.redirectToCheckout({
           sessionId: session.id,
         });
 
         if (result.error) {
-          console.error("Stripe Checkout Error:", result.error.message);
+          toast.error("Payment failed, please try again", result.error.message);
           setLink("cancel");
         }
       }
@@ -146,7 +142,11 @@ useEffect(()=>{
       <hr />
       <article>
         <h4>Total Price: {totalPrice}</h4>
-        <button className="btn btn-warning" onClick={makePayment}>
+        <button
+          className="btn btn-warning"
+          onClick={makePayment}
+          diasabled={totalPrice === 0}
+        >
           Checkout
         </button>
       </article>

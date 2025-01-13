@@ -11,6 +11,7 @@ import Modal from "./Modal";
 export default function Navbar({ link, setLink }) {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
+  const[cartValueFromDB,setCartValueFromDB] =useState([]);
   const [token, setToken] = useState(sessionStorage.getItem("token") || null);
 const[modal,setModal]=useState(false)
 
@@ -40,6 +41,7 @@ const[modal,setModal]=useState(false)
           const data = await response.json();
           if (response.ok && data.data) {
             dispatch({ type: "LOADCART", payload: data.data }); // Update Redux state with fetched cart
+            setCartValueFromDB(data.data);
           }
         } catch (err) {
           console.error("Error fetching cart:", err);
@@ -53,11 +55,11 @@ const[modal,setModal]=useState(false)
   }, [token, dispatch]);
 
   const cartItems = useSelector((state) => state.handlecart);
-  console.log("Cart items", cartItems);
+
 
   const totalItemsWithLogin = useMemo(() => {
-    return cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  }, [cartItems]);
+    return cartValueFromDB.reduce((acc, item) => acc + item.quantity, 0);
+  }, [cartValueFromDB]);
 
   const totalItemsWithoutLogin = cartItems.reduce(
     (acc, item) => acc + item.quantity,
