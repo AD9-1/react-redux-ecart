@@ -45,10 +45,7 @@ const GotoCart = ({ setLink, link }) => {
           },
           body: JSON.stringify({ cartItem }),
         });
-        if (res.ok) {
-          const data = await res.json();
-          toast.success(data.success);
-        }
+        
       }
     } catch (err) {
       toast.error("Error removing from cart", err);

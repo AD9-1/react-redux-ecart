@@ -16,7 +16,7 @@ const Failure = ({link,setLink}) => {
     console.log(link)
   return (
     <div className='failure'>
-        <section>
+   <section>
    <FontAwesomeIcon icon={faXmark} style={{color:"red"}} />
    <h4>Payment is not successful</h4>
    <p>Please try again.</p>

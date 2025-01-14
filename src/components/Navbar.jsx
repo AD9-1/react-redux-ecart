@@ -11,18 +11,8 @@ import Modal from "./Modal";
 export default function Navbar({ link, setLink }) {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
-
-  const [token, setToken] = useState(sessionStorage.getItem("token") || null);
+  const token = sessionStorage.getItem("token") 
   const [modal, setModal] = useState(false);
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setToken(sessionStorage.getItem("token") || null);
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -124,7 +114,7 @@ export default function Navbar({ link, setLink }) {
               Login
               <FontAwesomeIcon className="ms-2" icon={faArrowRightToBracket} />
             </button>
-            <button className="btn btn-outline-dark me-2" type="submit">
+            <button className="btn btn-outline-dark me-2" type="submit" onClick={() => setLink("signup")}>
               Sign-up
               <FontAwesomeIcon className="ms-2" icon={faCircleUser} />
             </button>
