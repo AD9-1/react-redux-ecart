@@ -13,11 +13,17 @@ const LocationHandler = ({ setLink }) => {
     (acc, item) => acc + item.quantity * item.price,
     0
   );
+  const query = new URLSearchParams(location.search);
+  const paymentStatus = query.get("payment");
+ const pathname = window.location.pathname
+
+
+
   useEffect(() => {
-    console.log("Current location:", location.pathname);
-    const query = new URLSearchParams(location.search);
-    const paymentStatus = query.get("payment");
-    console.log("Payment status before:", paymentStatus);
+    if(pathname.split("/").pop()==="cancel"){
+      window.history.replaceState(null, "", "/");
+    setLink("cancel");
+    }
     if (paymentStatus === "success") {
       const orderRa = async () => {
         try {
@@ -27,11 +33,11 @@ const LocationHandler = ({ setLink }) => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ ItemsInCart, totalPrice }),
+            body: JSON.stringify({cartItems: ItemsInCart, totalPrice }),
           });
           if (res.ok) {
             const data = await res.json();
-            toast.success("Order created Successfully", {
+            toast.success(data.message, {
               position: "top-right",
               autoClose: 5000,
               hideProgressBar: false,
@@ -52,7 +58,8 @@ const LocationHandler = ({ setLink }) => {
       };
       orderRa();
     }
-  }, [location, token]);
+
+  }, [location, token, dispatch, ItemsInCart, totalPrice,pathname]);
 
   return null; // This component doesn't render anything
 };

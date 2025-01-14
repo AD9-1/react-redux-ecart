@@ -24,7 +24,7 @@ function App() {
       <Navbar link={link} setLink={setLink}/>
       <LocationHandler  setLink={setLink}/>
       {link === "home" && <Home link={link} setLink={setLink} />}
-      {link==="gotoCart" && <GotoCart setLink={setLink}/>}
+      {link==="gotoCart" && <GotoCart setLink={setLink} link={link}/>}
       {link === "product" && (
         <Products
           link={link}
@@ -38,9 +38,11 @@ function App() {
       {link === "contact" && <div>Contact Us Page Content</div>}
       {link === "login" && <Login setLink={setLink} link={link}/>}
       {link === "signup" && <Login link={link} setLink={setLink}/>}
-   <Routes>
-    <Route path="/cancel" element={<Failure link={link} setLink={setLink}/>}/>
-   </Routes>
+      {link === "cancel" && (
+          <Routes>
+            <Route path="/cancel" element={<Failure link={link} setLink={setLink} />} />
+          </Routes>
+        )}
       </BrowserRouter>
     </div>
   );

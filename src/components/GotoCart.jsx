@@ -2,11 +2,10 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "./GotoCart.css";
 import { loadStripe } from "@stripe/stripe-js";
-
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ClearCart } from "./redux/action/action";
-const GotoCart = ({ setLink }) => {
+
+const GotoCart = ({ setLink, link }) => {
   const ItemsInCart = useSelector((state) => state.handlecart);
   const token = sessionStorage.getItem("token");
   const dispatch = useDispatch();
@@ -18,6 +17,7 @@ const GotoCart = ({ setLink }) => {
   useEffect(() => {
     if (totalPrice === 0) setLink("home");
   }, [totalPrice]);
+
   useEffect(() => {
     const fetchCart = async () => {
       const res = await fetch("http://localhost:2000/user/getCart", {
@@ -79,7 +79,6 @@ const GotoCart = ({ setLink }) => {
       setLink("login");
       return;
     }
-
     const stripe = await loadStripe(
       "pk_test_51OhJiKEbJSAocZFKhnUrTUYuuLGA9WZg7pkV8ygQnqwEqZKuEDtph9GkFTeVv4gpTR0YtBwclu3VomKZmQ2OBSdl00JBjvRPG3"
     );
@@ -100,7 +99,6 @@ const GotoCart = ({ setLink }) => {
 
         if (result.error) {
           toast.error("Payment failed, please try again", result.error.message);
-          setLink("cancel");
         }
       }
     } catch (error) {
@@ -142,11 +140,7 @@ const GotoCart = ({ setLink }) => {
       <hr />
       <article>
         <h4>Total Price: {totalPrice}</h4>
-        <button
-          className="btn btn-warning"
-          onClick={makePayment}
-          diasabled={totalPrice === 0}
-        >
+        <button className="btn btn-warning" onClick={makePayment}>
           Checkout
         </button>
       </article>

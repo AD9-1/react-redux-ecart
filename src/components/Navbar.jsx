@@ -11,10 +11,9 @@ import Modal from "./Modal";
 export default function Navbar({ link, setLink }) {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
-  const[cartValueFromDB,setCartValueFromDB] =useState([]);
-  const [token, setToken] = useState(sessionStorage.getItem("token") || null);
-const[modal,setModal]=useState(false)
 
+  const [token, setToken] = useState(sessionStorage.getItem("token") || null);
+  const [modal, setModal] = useState(false);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -24,8 +23,6 @@ const[modal,setModal]=useState(false)
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
-
-
 
   useEffect(() => {
     const fetchCart = async () => {
@@ -41,7 +38,6 @@ const[modal,setModal]=useState(false)
           const data = await response.json();
           if (response.ok && data.data) {
             dispatch({ type: "LOADCART", payload: data.data }); // Update Redux state with fetched cart
-            setCartValueFromDB(data.data);
           }
         } catch (err) {
           console.error("Error fetching cart:", err);
@@ -49,27 +45,22 @@ const[modal,setModal]=useState(false)
           setIsLoaded(true);
         }
       }
-     
     };
     fetchCart();
   }, [token, dispatch]);
 
   const cartItems = useSelector((state) => state.handlecart);
 
-
   const totalItemsWithLogin = useMemo(() => {
-    return cartValueFromDB.reduce((acc, item) => acc + item.quantity, 0);
-  }, [cartValueFromDB]);
-
-  const totalItemsWithoutLogin = cartItems.reduce(
-    (acc, item) => acc + item.quantity,
-    0
-  );
+    return cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  }, [cartItems]);
+  const totalItemsWithoutLogin = useMemo(() => {
+    return cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  }, [cartItems]);
   const handleGoto = () => {
     if (cartItems.length === 0) {
       setModal(true);
-    }
-   else setLink("gotoCart");
+    } else setLink("gotoCart");
   };
 
   return (
@@ -148,7 +139,7 @@ const[modal,setModal]=useState(false)
           </div>
         </div>
       </div>
-      {modal && <Modal setModal={setModal}/>}
+      {modal && <Modal setModal={setModal} />}
     </nav>
   );
 }

@@ -8,6 +8,7 @@ const Failure = ({link,setLink}) => {
     useEffect(()=>{
         setLink("cancel");
     },[])
+
     const handleReturnToHome = () => {
         setLink("home");  // Update the state for your navigation
         navigate("/");    // Navigate to the home path
